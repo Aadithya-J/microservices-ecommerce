@@ -1,0 +1,8 @@
+schema: schema.graphql
+
+models:
+  Account:
+    model: github.com/Aadithya-J/microservices-ecommerce/graphql.Account
+    fields:
+      orders:
+        resolver: true
