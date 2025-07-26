@@ -12,11 +12,9 @@ type queryResolver struct {
 }
 
 func (r *queryResolver) Accounts(ctx context.Context, pagination *PaginationInput, id *string) ([]*Account, error) {
-	// If an ID is provided, return at most one account.
 	if id != nil && *id != "" {
 		acc, err := r.server.accountClient.GetAccount(ctx, *id)
 		if err != nil {
-			// If the account is not found, return an empty list instead of an error.
 			if status.Code(err) == codes.NotFound {
 				return []*Account{}, nil
 			}
@@ -25,7 +23,6 @@ func (r *queryResolver) Accounts(ctx context.Context, pagination *PaginationInpu
 		return []*Account{{ID: acc.ID, Name: acc.Name}}, nil
 	}
 
-	// Handle pagination when listing.
 	var skip uint64
 	var take uint64 = 100
 	if pagination != nil {
@@ -53,9 +50,9 @@ func (r *queryResolver) Accounts(ctx context.Context, pagination *PaginationInpu
 }
 
 func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInput, id *string) ([]*Product, error) {
-	return nil, nil // Not implemented
+	return nil, nil
 }
 
 func (r *queryResolver) Orders(ctx context.Context, pagination *PaginationInput, id *string) ([]*Order, error) {
-	return nil, nil // Not implemented
+	return nil, nil
 }
