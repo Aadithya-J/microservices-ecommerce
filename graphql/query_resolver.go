@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type queryResolver struct {
@@ -9,16 +12,43 @@ type queryResolver struct {
 }
 
 func (r *queryResolver) Accounts(ctx context.Context, pagination *PaginationInput, id *string) ([]*Account, error) {
-	list, err := r.server.accountClient.ListAccounts(ctx, 0, 100) // TODO: Use pagination input
+	// If an ID is provided, return at most one account.
+	if id != nil && *id != "" {
+		acc, err := r.server.accountClient.GetAccount(ctx, *id)
+		if err != nil {
+			// If the account is not found, return an empty list instead of an error.
+			if status.Code(err) == codes.NotFound {
+				return []*Account{}, nil
+			}
+			return nil, err
+		}
+		return []*Account{{ID: acc.ID, Name: acc.Name}}, nil
+	}
+
+	// Handle pagination when listing.
+	var skip uint64
+	var take uint64 = 100
+	if pagination != nil {
+		if pagination.Skip != nil && *pagination.Skip >= 0 {
+			skip = uint64(*pagination.Skip)
+		}
+		if pagination.Take != nil && *pagination.Take > 0 {
+			t := uint64(*pagination.Take)
+			if t < 100 {
+				take = t
+			}
+		}
+	}
+
+	list, err := r.server.accountClient.ListAccounts(ctx, skip, take)
 	if err != nil {
 		return nil, err
 	}
 
-	var accounts []*Account
-	for _, acc := range list {
-		accounts = append(accounts, &Account{ID: acc.ID, Name: acc.Name})
+	accounts := make([]*Account, len(list))
+	for i, acc := range list {
+		accounts[i] = &Account{ID: acc.ID, Name: acc.Name}
 	}
-
 	return accounts, nil
 }
 

@@ -29,7 +29,7 @@ func main() {
 	log.Printf("Account Service URL: %s", cfg.AccountURL)
 	log.Printf("Product Service URL: %s", cfg.ProductURL)
 	log.Printf("Order Service URL: %s", cfg.OrderURL)
-	srv := handler.New(s.ToExecutableSchema())
+	srv := handler.NewDefaultServer(s.ToExecutableSchema())
 	http.Handle("/graphql", srv)
 	http.Handle("/playground", playground.Handler("GraphQL Playground", "/graphql"))
 
