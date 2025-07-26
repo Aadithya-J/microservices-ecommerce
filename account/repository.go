@@ -63,7 +63,7 @@ func (r *postgresRepository) GetAccountByID(ctx context.Context, id string) (*Ac
 	account := &Account{}
 	if err := row.Scan(&account.ID, &account.Name); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, sql.ErrNoRows
 		}
 		return nil, err
 	}

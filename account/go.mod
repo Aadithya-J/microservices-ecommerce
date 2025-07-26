@@ -1,6 +1,6 @@
 module github.com/Aadithya-J/microservices-ecommerce/account
 
-replace github.com/Aadithya-J/microservices-ecommerce/proto/account => ../proto/account
+
 
 go 1.24.4
 

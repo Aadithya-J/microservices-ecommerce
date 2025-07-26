@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-option go_package = "./proto;account";
+option go_package = "github.com/Aadithya-J/microservices-ecommerce/account/proto;account";
 
 message Account {
     string id = 1;
